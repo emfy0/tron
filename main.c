@@ -65,10 +65,9 @@ void* thread_funk() {
         return NULL;
     }
 
-    char str[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &(remoteaddr.sin_addr), str, INET_ADDRSTRLEN);
-    printf("%d %s\n", remoteaddr.sin_addr.s_addr, str);
-    char ch;
+    // char str[INET_ADDRSTRLEN];
+    // inet_ntop(AF_INET, &(remoteaddr.sin_addr), str, INET_ADDRSTRLEN);
+    // printf("%d %s\n", remoteaddr.sin_addr.s_addr, str);
     while(1) {
 
 
@@ -78,7 +77,7 @@ void* thread_funk() {
     }
     close(cd);
     close(sd);
-    return 0;
+    return NULL;
 }
 
 void replace(Snake *snake, int length) {
@@ -119,6 +118,9 @@ int main(int argc, char *argv[]) {
         close(fb);
         return __LINE__;
     }
+    
+    pthread_t* thread = malloc(sizeof(pthread_t));
+    pthread_create(thread, NULL, thread_funk, NULL);
 
     initscr();
     noecho();
@@ -129,8 +131,6 @@ int main(int argc, char *argv[]) {
         snake.x[i] = 0; snake.y[i] = 0;
     }
 
-    pthread_t* thread = malloc(sizeof(pthread_t));
-    pthread_create(thread, NULL, thread_funk, NULL);
     while(work_flag) {
         for(int i = 0;i < SNAKE_LEN; i++)
             ptr[snake.y[i] * info.xres_virtual + snake.x[i]] = color;
