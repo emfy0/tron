@@ -10,6 +10,8 @@
 #include <signal.h>
 #include <pthread.h>
 #include <ncurses.h>
+#include <arpa/inet.h>
+#include <sys/types.h>
 
 //gcc pixel_snake.c -lncurses -pthread
 
@@ -26,17 +28,57 @@ void handler(int none) {
 }
 
 void* thread_funk() {
-    char buff;
-    while(ch != 'q')
-    {   
-        buff = ch;
-        ch=getch();
-        if(ch != 'a' && ch != 's' && ch != 'w' && ch != 'd' && ch != 'q')
-            ch = buff;
+    int sd;
+    int cd;
+    struct sockaddr_in addr, remoteaddr;
+
+    sd = socket(AF_INET, SOCK_STREAM, 0);
+
+    if( sd < 0 ) {
+        perror("Error calling socket");
+        close(sd);
+        return NULL;
+    }
+    
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(2021);
+    // addr.sin_addr.s_addr = inet_addr( "127.0.0.1" );
+    addr.sin_addr.s_addr = INADDR_ANY;
+
+    if( bind(sd, (struct sockaddr *)&addr, sizeof(addr)) < 0 ) {
+        perror("Bind");
+        close(sd);
+        return NULL;
+    }
+    
+    if( listen(sd, 5) ) {
+        perror("Listen");
+        close(sd);
+        return NULL;
     }
 
-    work_flag = 0;
-    return NULL;
+    socklen_t remoteaddr_len;
+    if ( 0 > (cd = accept(sd, (struct sockaddr *)&remoteaddr, &remoteaddr_len ))) {
+        perror("Accept");
+        close(sd);
+        close(cd);
+        return NULL;
+    }
+
+    char str[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(remoteaddr.sin_addr), str, INET_ADDRSTRLEN);
+    printf("%d %s\n", remoteaddr.sin_addr.s_addr, str);
+    char ch;
+    while(1) {
+
+
+        recv(cd, &ch, 1, 0);
+        if (ch == 'q')
+            break;
+    }
+    close(cd);
+    close(sd);
+    return 0;
 }
 
 void replace(Snake *snake, int length) {

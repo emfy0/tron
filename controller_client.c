@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
 
     addr.sin_family = AF_INET;
     addr.sin_port = htons(2021);
-    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    addr.sin_addr.s_addr = inet_addr("178.140.145.36");
     
     if ( (-1) == connect(cd,(struct sockaddr *)&addr, sizeof(addr))) {
         perror("connect");
@@ -26,10 +26,11 @@ int main(int argc, char* argv[]) {
         return 2;
     }
 
-    char ch, buff;
+    initscr();
 
+    char ch, buff;
     while(ch != 'p') {
-        scanf("%c\n", &ch);
+        ch = getch();
         send(cd, &ch, 1, 0);
     }
 
