@@ -17,42 +17,44 @@ typedef struct
 	int x[40];
 	int y[40];
 } dlina;
-int work_flag = 1, i=0;
 char ch;
+int work_flag = 1, i=0;
 char ch1;
 int pointwin=0;
+int taley=22;
+int talex=19;
 
 void* direction()
 {
 	char g=ch;
 	while(ch!='q' || pointwin==1)
 	{
-		ch1=ch;
+		char k=ch;
 		ch=getch();
 		switch(ch)
 		{
 			case'w':
-				if(ch1=='s')
+				if(k=='s')
 				{
-					ch=ch1;
+					ch=k;
 				}
 				break;
 			case's':
-				if(ch1=='w')
+				if(k=='w')
 				{
-					ch=ch1;
+					ch=k;
 				}
 				break;
 			case'd':
-				if(ch1=='a')
+				if(k=='a')
 				{
-					ch=ch1;
+					ch=k;
 				}
 				break;
 			case'a':
-				if(ch1=='d')
+				if(k=='d')
 				{
-					ch=ch1;
+					ch=k;
 				}
 				break;
 			default:
@@ -115,7 +117,6 @@ int main(int argc, char *argv[])
   	dlina snake;
   	for(i=0;i<40; i++)
   	{
-  		//snake.x[i]=i;
   		snake.y[i]=i/8 + 20;
   		snake.x[i]=i%8 + 20;
   	}
@@ -128,7 +129,7 @@ int main(int argc, char *argv[])
     	keypad(stdscr,TRUE);
 
     	pthread_t* threads =(pthread_t*)malloc(sizeof(pthread_t));
-    	pthread_create(threads, NULL, direction, NULL);
+    	pthread_create(threads, NULL, direction, &ch);
   	while(ch!='q' && work_flag)
   	{
   		for(i=0;i<40; i++)
@@ -144,8 +145,8 @@ int main(int argc, char *argv[])
     				talex=snake.x[16];
 				for(i=0;i<40; i++)
   				{
-  					snake.y[i]=taley-1 - i%8;
-  					snake.x[i]=talex-2 + i/8;
+  					snake.y[i]=(taley-1 - i%8+info.yres)%info.yres;
+  					snake.x[i]=(talex-2 + i/8+info.xres)%info.xres;
   				}
 				break;
 			case 's':
@@ -153,8 +154,8 @@ int main(int argc, char *argv[])
     				talex=snake.x[16];
 				for(i=0;i<40; i++)
   				{
-  					snake.y[i]=taley+1 + i%8;
-  					snake.x[i]=talex+2 - i/8;
+  					snake.y[i]=(taley+1 + i%8+info.yres)%info.yres;
+  					snake.x[i]=(talex+2 - i/8+info.xres)%info.xres;
   				}
 				break;
 			case 'a':
@@ -162,8 +163,8 @@ int main(int argc, char *argv[])
     				talex=snake.x[16];
 				for(i=0;i<40; i++)
   				{
-  					snake.y[i]=taley+2 - i/8;
-  					snake.x[i]=talex-1 - i%8;
+  					snake.y[i]=(taley+2 - i/8+info.yres)%info.yres;
+  					snake.x[i]=(talex-1 - i%8+info.xres)%info.xres;
   				}
 					break;
 			case 'd':
@@ -171,8 +172,8 @@ int main(int argc, char *argv[])
     				talex=snake.x[16];
 				for(i=0;i<40; i++)
   				{
-  					snake.y[i]=taley-2 + i/8;
-  					snake.x[i]=talex+1 + i%8;
+  					snake.y[i]=(taley-2 + i/8+info.yres)%info.yres;
+  					snake.x[i]=(talex+1 + i%8+info.xres)%info.xres;
   				}
 				break;
 			default:
