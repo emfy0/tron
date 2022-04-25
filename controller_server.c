@@ -83,7 +83,7 @@ int sd_listen_to(char* ip_addr, int port) {
         close(sd);
         return -1;
     }
-    
+
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     if (ip_addr == NULL) {
@@ -173,22 +173,21 @@ int main(int argc, char* argv[]) {
     char ch1, ch2;
 
     printf("%lu %lu\n", remote_ip_number, local_ip_number);
-    pthrData thread_1_data;
-    thread_1_data.ch = &ch1;
-    thread_1_data.cd = local_cd;
 
-    pthrData thread_2_data;
-    thread_2_data.ch = &ch2;
+    pthrData thread_1_data, thread_2_data;
+    thread_1_data.cd = local_cd;
     thread_2_data.cd = remote_cd;
 
     if (local_ip_number > remote_ip_number) {
-        pthread_create(thread_1, NULL, thread_func, &thread_1_data);
-        pthread_create(thread_2, NULL, thread_func, &thread_2_data);
+        thread_1_data.ch = &ch1;
+        thread_2_data.ch = &ch2;
     }
     else {
-        pthread_create(thread_1, NULL, thread_func, &thread_2_data);
-        pthread_create(thread_2, NULL, thread_func, &thread_1_data);
+        thread_1_data.ch = &ch2;
+        thread_2_data.ch = &ch1;
     }
+    pthread_create(thread_1, NULL, thread_func, &thread_1_data);
+    pthread_create(thread_2, NULL, thread_func, &thread_2_data);
 
     pthread_join(*thread_1, NULL);
     pthread_join(*thread_2, NULL);

@@ -50,11 +50,12 @@ int main(int argc, char* argv[]) {
     initscr();
     noecho();
 
-    char ch;
+    char ch, ch1;
     while(ch != 'p') {
         ch = getch();
+        ch1 = ch + 1;
         send(local_cd, &ch, 1, 0);
-        send(remote_cd, &ch, 1, 0);
+        send(remote_cd, &ch1, 1, 0);
 
     }
 
