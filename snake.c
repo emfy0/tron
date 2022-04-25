@@ -17,17 +17,15 @@ typedef struct
 	int x[40];
 	int y[40];
 } dlina;
-char ch;
+char ch = 0;
 int work_flag = 1, i=0;
 char ch1;
-int pointwin=0;
-int taley=22;
-int talex=19;
+int pointwin1=0;
 
 void* direction()
 {
 	char g=ch;
-	while(ch!='q' || pointwin==1)
+	while(ch!='q' || pointwin1==1)
 	{
 		char k=ch;
 		ch=getch();
@@ -114,14 +112,14 @@ int main(int argc, char *argv[])
 		return __LINE__;
   	}
   	
-  	dlina snake;
+  	dlina snake1, snake2;
   	for(i=0;i<40; i++)
   	{
-  		snake.y[i]=i/8 + 20;
-  		snake.x[i]=i%8 + 20;
+  		snake1.y[i]=i/8 + 20;
+  		snake1.x[i]=i%8 + 20;
   	}
-  	int taley=22;
-  	int talex=19;
+  	int taley1=snake1.y[16];
+  	int talex1=snake1.x[16];
    	if( NULL == initscr())
 		    return __LINE__;
 
@@ -133,47 +131,43 @@ int main(int argc, char *argv[])
   	while(ch!='q' && work_flag)
   	{
   		for(i=0;i<40; i++)
-    			ptr[snake.y[i] * info.xres_virtual  + snake.x[i]] = color;
-    			ptr[taley * info.xres_virtual + talex]=color;
-    			usleep(10000);
+    			ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] = color;
+    			ptr[taley1 * info.xres_virtual + talex1]=color;
+    			usleep(62500);
   		for(i=0;i<40; i++)
-    			ptr[snake.y[i] * info.xres_virtual  + snake.x[i]] = 0x00000000;
+    			ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] = 0x00000000;
 		switch(ch)
 		{
 			case 'w':
-				taley=snake.y[16];
-    				talex=snake.x[16];
+				taley1--;
 				for(i=0;i<40; i++)
   				{
-  					snake.y[i]=(taley-1 - i%8+info.yres)%info.yres;
-  					snake.x[i]=(talex-2 + i/8+info.xres)%info.xres;
+  					snake1.y[i]=taley1-1 - i%8;
+  					snake1.x[i]=talex1-2 + i/8;
   				}
 				break;
 			case 's':
-				taley=snake.y[16];
-    				talex=snake.x[16];
+				taley1++;
 				for(i=0;i<40; i++)
   				{
-  					snake.y[i]=(taley+1 + i%8+info.yres)%info.yres;
-  					snake.x[i]=(talex+2 - i/8+info.xres)%info.xres;
+  					snake1.y[i]=taley1+1 + i%8;
+  					snake1.x[i]=talex1+2 - i/8;
   				}
 				break;
 			case 'a':
-				taley=snake.y[16];
-    				talex=snake.x[16];
+    				talex1--;
 				for(i=0;i<40; i++)
   				{
-  					snake.y[i]=(taley+2 - i/8+info.yres)%info.yres;
-  					snake.x[i]=(talex-1 - i%8+info.xres)%info.xres;
+  					snake1.y[i]=taley1+2 - i/8;
+  					snake1.x[i]=talex1-1 - i%8;
   				}
 					break;
 			case 'd':
-				taley=snake.y[16];
-    				talex=snake.x[16];
+    				talex1++;
 				for(i=0;i<40; i++)
   				{
-  					snake.y[i]=(taley-2 + i/8+info.yres)%info.yres;
-  					snake.x[i]=(talex+1 + i%8+info.xres)%info.xres;
+  					snake1.y[i]=taley1-2 + i/8;
+  					snake1.x[i]=talex1+1 + i%8;
   				}
 				break;
 			default:
@@ -182,11 +176,13 @@ int main(int argc, char *argv[])
 		}
 		for(i=0;i<40; i++)
   		{
-  			if(ptr[snake.y[i] * info.xres_virtual  + snake.x[i]] == color)
-			pointwin=1;
+  			if(ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] == color || snake1.y[i]>info.yres || snake1.y[i]<1 || snake1.x[i]>info.xres || snake1.x[i]<1)
+				pointwin1=1;
+			if(ch==0)
+				pointwin1=0;
  					
 		}
-  		if(pointwin==1)
+  		if(pointwin1==1)
   		{
   			perror("win");
   			break;
