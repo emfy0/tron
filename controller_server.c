@@ -194,7 +194,11 @@ int controller_server(int local_port, int remote_port, char* ch1, char* ch2, uin
     pthread_join(*thread_1, NULL);
     pthread_join(*thread_2, NULL);
 
-    printf("ch1: '%c' ch2: '%c'", *ch1, *ch2);
+    // printf("ch1: '%c' ch2: '%c'", *ch1, *ch2);
+
+    free(thread_1);
+    free(thread_2);
+
 
     close(local_cd);
     close(remote_cd);

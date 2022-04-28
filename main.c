@@ -50,6 +50,9 @@ int main() {
     pthread_join(*thread_1, NULL);
     pthread_join(*thread_2, NULL);
 
+    free(thread_1);
+    free(thread_2);
+
     endwin();
 
     printf("MAIN ch1: '%c' ch2: '%c'", ch1, ch2);
