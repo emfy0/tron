@@ -60,5 +60,5 @@ int main() {
 
     endwin();
 
-    printf("MAIN ch1: '%c' ch2: '%c'", ch1, ch2); // <-- DOT FORGET TO COMMENT THIS ;)
+    printf("MAIN ch1: '%c' ch2: '%c'", ch1, ch2); // <-- DONT FORGET TO COMMENT THIS ;)
 }
