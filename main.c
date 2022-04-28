@@ -1,167 +1,56 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <linux/fb.h>
-#include <string.h>
-#include <sys/mman.h>
-#include <stdint.h>
-#include <sys/ioctl.h>
-#include <fcntl.h>
-#include <signal.h>
 #include <pthread.h>
-#include <ncurses.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <curses.h>
 
-//gcc pixel_snake.c -lncurses -pthread
+#include "controller.h"
 
-#define SNAKE_LEN 60
-
-typedef struct {
-    int x[SNAKE_LEN], y[SNAKE_LEN];
-}Snake;
-
-char ch;
-int work_flag = 1;
-void handler(int none) {
-    work_flag = 0;
-}
-
-void* thread_funk() {
-    int sd;
-    int cd;
-    struct sockaddr_in addr, remoteaddr;
-
-    sd = socket(AF_INET, SOCK_STREAM, 0);
-
-    if( sd < 0 ) {
-        perror("Error calling socket");
-        close(sd);
-        return NULL;
-    }
-    
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(2021);
-    // addr.sin_addr.s_addr = inet_addr( "127.0.0.1" );
-    addr.sin_addr.s_addr = INADDR_ANY;
-
-    if( bind(sd, (struct sockaddr *)&addr, sizeof(addr)) < 0 ) {
-        perror("Bind");
-        close(sd);
-        return NULL;
-    }
-    
-    if( listen(sd, 5) ) {
-        perror("Listen");
-        close(sd);
-        return NULL;
-    }
-
-    socklen_t remoteaddr_len;
-    if ( 0 > (cd = accept(sd, (struct sockaddr *)&remoteaddr, &remoteaddr_len ))) {
-        perror("Accept");
-        close(sd);
-        close(cd);
-        return NULL;
-    }
-
-    // char str[INET_ADDRSTRLEN];
-    // inet_ntop(AF_INET, &(remoteaddr.sin_addr), str, INET_ADDRSTRLEN);
-    // printf("%d %s\n", remoteaddr.sin_addr.s_addr, str);
-    while(1) {
-
-
-        recv(cd, &ch, 1, 0);
-        if (ch == 'q')
-            break;
-    }
-    close(cd);
-    close(sd);
+void *thread_server (void* thread_data) {
+    Server_data* data = (Server_data*)thread_data;
+    controller_server(data->local_port, data->remote_port, data->ch1, data->ch2, data->work_flag);
     return NULL;
 }
 
-void replace(Snake *snake, int length) {
-    for(int i = 0; i < length - 1; i++)
-    {
-        snake->x[i]=snake->x[i+1];
-        snake->y[i]=snake->y[i+1];
-    }
+void *thread_client (void* thread_data) {
+    Client_data* data = (Client_data*)thread_data;
+    controller_client(data->remote_ip, data->local_port, data->remote_port, data->work_flag);
+    return NULL;
 }
 
-int main(int argc, char *argv[]) {
-    int fb;
-    struct fb_var_screeninfo info;
-    size_t fb_size, map_size, page_size;
-    uint32_t *ptr, color = 0x666333cc;
+int main() {
+    char* remote_ip = "192.168.1.38";
 
-    signal(SIGINT, handler);
+    pthread_t* thread_1 = malloc(sizeof(pthread_t));
+    pthread_t* thread_2 = malloc(sizeof(pthread_t));
+    uint8_t work_flag = 1;
+    char ch1, ch2;
 
-    page_size = sysconf(_SC_PAGESIZE);
+    Server_data server_data = {
+        .local_port = 2021,
+        .remote_port = 12345,
+        .ch1 = &ch1,
+        .ch2 = &ch2,
+        .work_flag = &work_flag
+    };
 
-    if ( 0 > (fb = open("/dev/fb0", O_RDWR))) {
-        perror("open");
-        return __LINE__;
-    }
-
-    if ( (-1) == ioctl(fb, FBIOGET_VSCREENINFO, &info)) {
-        perror("ioctl");
-        close(fb);
-        return __LINE__;
-    }
-
-    fb_size = sizeof(uint32_t) * info.xres_virtual * info.yres_virtual;
-    map_size = (fb_size + (page_size - 1 )) & (~(page_size-1));
-
-    ptr = mmap(NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fb, 0);
-    if ( MAP_FAILED == ptr ) {
-        perror("mmap");
-        close(fb);
-        return __LINE__;
-    }
-    
-    pthread_t* thread = malloc(sizeof(pthread_t));
-    pthread_create(thread, NULL, thread_funk, NULL);
+    Client_data client_data= {
+        .remote_ip = remote_ip,
+        .local_port = 2021,
+        .remote_port = 12345,
+        .work_flag = &work_flag
+    };
 
     initscr();
     noecho();
-    keypad(stdscr,TRUE);
 
-    Snake snake;
-    for(int i = 0; i < SNAKE_LEN; i++) {
-        snake.x[i] = 0; snake.y[i] = 0;
-    }
+    pthread_create(thread_1, NULL, thread_server, &server_data);
+    pthread_create(thread_2, NULL, thread_client, &client_data);
 
-    while(work_flag) {
-        for(int i = 0;i < SNAKE_LEN; i++)
-            ptr[snake.y[i] * info.xres_virtual + snake.x[i]] = color;
+    pthread_join(*thread_1, NULL);
+    pthread_join(*thread_2, NULL);
 
-        ptr[snake.y[0] * info.xres_virtual + snake.x[0]] = 0;
+    endwin();
 
-        replace(&snake, SNAKE_LEN);
-
-        switch(ch) {
-            case 'w':
-                snake.y[SNAKE_LEN - 1] = (snake.y[SNAKE_LEN - 1] + info.yres - 1) % info.yres;
-                break;
-            case 's':
-                snake.y[SNAKE_LEN - 1] = (snake.y[SNAKE_LEN - 1] + 1) % info.yres;
-                break;
-            case 'a':
-                snake.x[SNAKE_LEN - 1] = (snake.x[SNAKE_LEN - 1] + info.xres - 1) % info.xres;
-                    break;
-            case 'd':
-                snake.x[SNAKE_LEN - 1]=(snake.x[SNAKE_LEN - 1] + 1) % info.xres;
-                break;
-            default:
-                break;
-        }
-
-        usleep(10000);
-    }
-
-    pthread_join(*thread, NULL);
-    free(thread);
-    munmap(ptr, map_size);
-    close(fb);
-    return 0;
+    printf("MAIN ch1: '%c' ch2: '%c'", ch1, ch2);
 }

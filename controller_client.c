@@ -1,9 +1,12 @@
 #include <arpa/inet.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <ncurses.h>
+
+#include "controller.h"
 
 int connect_to(char *ip_addr, int port) {
     struct sockaddr_in addr;
@@ -25,11 +28,7 @@ int connect_to(char *ip_addr, int port) {
     return cd;
 }
 
-int main(int argc, char* argv[]) {
-    int local_port = 2021;
-    char remote_ip[] = "192.168.1.38";
-    int remote_port = 12345;
-
+int controller_client(char* remote_ip, int local_port, int remote_port, uint8_t* work_flag) {
     int local_cd = connect_to("127.0.0.1", local_port);
     printf( "connecting to remote ip...\n");
     int remote_cd = connect_to(remote_ip, remote_port);
@@ -47,11 +46,10 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    initscr();
-    noecho();
+    if ( local_cd <= 0 || remote_cd <= 0 ) return -1;
 
     char ch, ch1;
-    while(ch != 'p') {
+    while(ch != 'p' && *work_flag) {
         ch = getch();
         ch1 = ch + 1;
         send(local_cd, &ch, 1, 0);

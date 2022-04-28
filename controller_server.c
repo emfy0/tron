@@ -5,12 +5,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <errno.h> //errno
 #include <ifaddrs.h>
 #include <netdb.h>
 #include <string.h> //memset
 #include <sys/socket.h>
+
+
+#include "controller.h"
 
 
 u_int get_local_ip() {
@@ -111,25 +113,24 @@ int sd_listen_to(char* ip_addr, int port) {
 typedef struct {
     char* ch;
     int cd;
+    u_int8_t* work_flag;
 } pthrData;
 
 void* thread_func(void* thread_data) {
      pthrData *data = (pthrData*) thread_data;
 
-    while(1) {
+    while(*(data->work_flag)) {
         int recieve = recv(data->cd, data->ch, 1, 0);
         printf("%c\n", *(data->ch));
-        if (*(data->ch) == 'q' || recieve == -1 || recieve == 0)
-            break;
+        if (*(data->ch) == 'p' || recieve == -1 || recieve == 0)
+            *(data->work_flag) = 0;
     }
 
     return NULL;
 }
 
-int main(int argc, char* argv[]) {
+int controller_server(int local_port, int remote_port, char* ch1, char* ch2, uint8_t* work_flag) {
     char local_ip[] = "127.0.0.1";
-    int local_port = 2021;
-    int remote_port = 12345;
 
     int local_sd = sd_listen_to(local_ip, local_port);
     if (local_sd < 0) {
@@ -137,7 +138,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    printf("waiting for local connection\n");
+    // printf("waiting for local connection\n");
     int local_cd = accept(local_sd, NULL, NULL );
     if ( 0 > local_cd ) {
         perror("Accept");
@@ -146,7 +147,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     u_int local_ip_number = ntohl(get_local_ip());
-    printf("local_ip_number: %lu\n", local_ip_number);
+    // printf("local_ip_number: %lu\n", local_ip_number);
 
     int remote_sd = sd_listen_to(NULL, remote_port);
     if (remote_sd < 0) {
@@ -156,7 +157,7 @@ int main(int argc, char* argv[]) {
 
     struct sockaddr_in* remoteaddr = malloc(sizeof(struct sockaddr_in));
     socklen_t remoteaddr_len;
-    printf("waiting for remote connection\n");
+    // printf("waiting for remote connection\n");
     // int remote_cd = accept(remote_sd, NULL,NULL );
     int remote_cd = accept(remote_sd, (struct sockaddr*)remoteaddr, &remoteaddr_len );
     if ( 0 > remote_cd ) {
@@ -170,21 +171,22 @@ int main(int argc, char* argv[]) {
 
     pthread_t* thread_1 = malloc(sizeof(pthread_t));
     pthread_t* thread_2 = malloc(sizeof(pthread_t));
-    char ch1, ch2;
 
-    printf("%lu %lu\n", remote_ip_number, local_ip_number);
+    // printf("%lu %lu\n", remote_ip_number, local_ip_number);
 
     pthrData thread_1_data, thread_2_data;
     thread_1_data.cd = local_cd;
     thread_2_data.cd = remote_cd;
+    thread_1_data.work_flag = work_flag;
+    thread_2_data.work_flag = work_flag;
 
     if (local_ip_number > remote_ip_number) {
-        thread_1_data.ch = &ch1;
-        thread_2_data.ch = &ch2;
+        thread_1_data.ch = ch1;
+        thread_2_data.ch = ch2;
     }
     else {
-        thread_1_data.ch = &ch2;
-        thread_2_data.ch = &ch1;
+        thread_1_data.ch = ch2;
+        thread_2_data.ch = ch1;
     }
     pthread_create(thread_1, NULL, thread_func, &thread_1_data);
     pthread_create(thread_2, NULL, thread_func, &thread_2_data);
@@ -192,7 +194,7 @@ int main(int argc, char* argv[]) {
     pthread_join(*thread_1, NULL);
     pthread_join(*thread_2, NULL);
 
-    printf("ch1: '%c' ch2: '%c'", ch1, ch2);
+    printf("ch1: '%c' ch2: '%c'", *ch1, *ch2);
 
     close(local_cd);
     close(remote_cd);

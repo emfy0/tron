@@ -1,8 +1,5 @@
-TO_DO
+HOW TO COMPILE:
 ---
-
-Создать потоки, в которых будут изменяться ch1 и ch2 (порядок выбрать с помощью их ip_number).
-
-Изменения происходят с помощью прослушивания в потоке cd.
-
-Преобразовать все в функцию.
+```
+gcc main.c controller_server.c controller_client.c -o main.exe -lncurses -pthread
+```
