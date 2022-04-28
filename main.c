@@ -47,6 +47,11 @@ int main() {
     pthread_create(thread_1, NULL, thread_server, &server_data);
     pthread_create(thread_2, NULL, thread_client, &client_data);
 
+    /*
+     *      JUST ADD GAMELOOP HERE   ||
+     *                              \__/
+     */
+
     pthread_join(*thread_1, NULL);
     pthread_join(*thread_2, NULL);
 
@@ -55,5 +60,5 @@ int main() {
 
     endwin();
 
-    printf("MAIN ch1: '%c' ch2: '%c'", ch1, ch2);
+    printf("MAIN ch1: '%c' ch2: '%c'", ch1, ch2); // <-- DOT FORGET TO COMMENT THIS ;)
 }
