@@ -31,35 +31,35 @@ int connect_to(char *ip_addr, int port) {
 int controller_client(char* remote_ip, int local_port, int remote_port, uint8_t* work_flag) {
     int local_cd = connect_to("127.0.0.1", local_port);
     // printf( "connecting to remote ip...\n");
-    int remote_cd = connect_to(remote_ip, remote_port);
+    // int remote_cd = connect_to(remote_ip, remote_port);
 
-    {
-        int counter = 0;
-        while (counter < 10) {
-            if (remote_cd > 0) {
-                break;
-            }
-            remote_cd = connect_to(remote_ip, remote_port);
-            counter++;
-            printw("times of retrying left: %d\n", 11 - counter);
-            refresh();
-            sleep ( 1);
-        }
-    }
+    // {
+    //     int counter = 0;
+    //     while (counter < 10) {
+    //         if (remote_cd > 0) {
+    //             break;
+    //         }
+    //         remote_cd = connect_to(remote_ip, remote_port);
+    //         counter++;
+    //         printw("times of retrying left: %d\n", 11 - counter);
+    //         refresh();
+    //         sleep ( 1);
+    //     }
+    // }
     clear();
 
-    if ( local_cd <= 0 || remote_cd <= 0 ) { return -1; *work_flag = 0; }
+    // if ( local_cd <= 0 || remote_cd <= 0 ) { return -1; *work_flag = 0; }
 
     char ch;
     while(ch != 'p' && *work_flag) {
         ch = getch();
         send(local_cd, &ch, 1, 0);
-        send(remote_cd, &ch, 1, 0);
+        // send(remote_cd, &ch, 1, 0);
 
     }
     *work_flag = 0;
 
-    close(remote_cd);
+    // close(remote_cd);
     close(local_cd);
     return 0;
 }
