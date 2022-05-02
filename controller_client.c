@@ -48,14 +48,14 @@ int controller_client(char* remote_ip, int local_port, int remote_port, uint8_t*
 
     if ( local_cd <= 0 || remote_cd <= 0 ) return -1;
 
-    char ch, ch1;
+    char ch;
     while(ch != 'p' && *work_flag) {
         ch = getch();
-        ch1 = ch + 1;
         send(local_cd, &ch, 1, 0);
-        send(remote_cd, &ch1, 1, 0);
+        send(remote_cd, &ch, 1, 0);
 
     }
+    *work_flag = 0;
 
     close(remote_cd);
     close(local_cd);
