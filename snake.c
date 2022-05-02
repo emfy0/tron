@@ -25,7 +25,7 @@ char k = 0,g = 0;
 
 void* direction()
 {
-	while(ch1!='q' || pointwin1==1)
+	while((ch1!='q' && ch2!='q') || pointwin1==1 || pointwin2==1)
 	{
 		ch1=getch();
 	}
@@ -98,8 +98,7 @@ int main(int argc, char *argv[])
     	keypad(stdscr,TRUE);
 
     	pthread_t* threads =(pthread_t*)malloc(2*sizeof(pthread_t));
-    	pthread_create(threads, NULL, direction, &ch1);
-    	pthread_create(threads+1,NULL,direction, &ch2);
+    	pthread_create(threads, NULL, direction, NULL);
   	while((ch1!='q'|| ch2!='q') && work_flag)
   	{
   		for(i=0;i<40; i++)
