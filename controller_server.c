@@ -121,7 +121,7 @@ void* thread_func(void* thread_data) {
 
     while(*(data->work_flag)) {
         int recieve = recv(data->cd, data->ch, 1, 0);
-        // printf("%c\n", *(data->ch));
+        printf("%c\n", *(data->ch));
         if (*(data->ch) == 'p' || recieve == -1 || recieve == 0)
             *(data->work_flag) = 0;
     }
@@ -158,7 +158,6 @@ int controller_server(int local_port, int remote_port, char* ch1, char* ch2, uin
     struct sockaddr_in* remoteaddr = malloc(sizeof(struct sockaddr_in));
     socklen_t remoteaddr_len;
     // printf("waiting for remote connection\n");
-    // int remote_cd = accept(remote_sd, NULL,NULL );
     int remote_cd = accept(remote_sd, (struct sockaddr*)remoteaddr, &remoteaddr_len );
     if ( 0 > remote_cd ) {
         perror("Accept");

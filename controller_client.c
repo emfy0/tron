@@ -41,12 +41,12 @@ int controller_client(char* remote_ip, int local_port, int remote_port, uint8_t*
             }
             remote_cd = connect_to(remote_ip, remote_port);
             counter++;
-            // printf("times of retrying left: %d\n", 11 - counter);
+            printf("times of retrying left: %d\n", 11 - counter);
             sleep ( 1);
         }
     }
 
-    if ( local_cd <= 0 || remote_cd <= 0 ) return -1;
+    if ( local_cd <= 0 || remote_cd <= 0 ) { return -1; *work_flag = 0; }
 
     char ch;
     while(ch != 'p' && *work_flag) {
