@@ -121,7 +121,7 @@ void* thread_func(void* thread_data) {
 
     while(*(data->work_flag)) {
         int recieve = recv(data->cd, data->ch, 1, 0);
-        printf("%c\n", *(data->ch));
+        // printf("%c\n", *(data->ch));
         if (*(data->ch) == 'p' || recieve == -1 || recieve == 0)
             *(data->work_flag) = 0;
     }
@@ -187,6 +187,7 @@ int controller_server(int local_port, int remote_port, char* ch1, char* ch2, uin
         thread_1_data.ch = ch2;
         thread_2_data.ch = ch1;
     }
+
     pthread_create(thread_1, NULL, thread_func, &thread_1_data);
     pthread_create(thread_2, NULL, thread_func, &thread_2_data);
 

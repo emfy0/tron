@@ -45,6 +45,7 @@ int main() {
     noecho();
 
     pthread_create(thread_1, NULL, thread_server, &server_data);
+    sleep(1);
     pthread_create(thread_2, NULL, thread_client, &client_data);
 
     /*
