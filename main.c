@@ -32,12 +32,12 @@ typedef struct
 } dlina;
 
 int main() {
-    char* remote_ip = "192.168.1.38";
+    char* remote_ip = "172.20.10.9";
 
     pthread_t* thread_1 = malloc(sizeof(pthread_t));
     pthread_t* thread_2 = malloc(sizeof(pthread_t));
-    uint8_t work_flag = 1, i=0;
-    int pointwin1=0, pointwin2=0;
+    uint8_t work_flag = 1;
+    int pointwin1=0, pointwin2=0, i=0;
     char k = 0, g = 0;
     char ch1 = 0, ch2 = 0;
 
@@ -67,7 +67,7 @@ int main() {
 	struct fb_var_screeninfo info;
 	size_t fb_size, map_size, page_size;
 	uint32_t *ptr, color1, color2;
-	// signal(SIGINT, handler);
+	//signal(SIGINT, handler); 
 
 	color1 = 0xd63a1e ;
 	color2 = 0x00FFFF;
@@ -88,7 +88,7 @@ int main() {
     		return __LINE__;
   	}
   
-  	fb_size = sizeof(uint32_t) * info.xres * info.yres;
+  	fb_size = sizeof(uint32_t) * info.xres_virtual * info.yres_virtual;
   	map_size = (fb_size + (page_size - 1 )) & (~(page_size-1));
 
   	ptr = mmap(NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fb, 0);
@@ -112,31 +112,31 @@ int main() {
   	}
   	int taley1=snake1.y[16];
 	int talex1=snake1.x[16];
-	int taley2=info.yres-20 - 2;
-	int talex2=info.xres-20;
+	int taley2=snake2.y[16];
+	int talex2=snake2.x[16];
+	
+   	//if( NULL == initscr())
+	//	    return __LINE__;
 
-   	// if( NULL == initscr())
-	// 	    return __LINE__;
+	//noecho();
+    	//keypad(stdscr,TRUE);
 
-	// noecho();
-    keypad(stdscr,TRUE);
-
-    	// pthread_t* threads =(pthread_t*)malloc(2*sizeof(pthread_t));
-    	// pthread_create(threads, NULL, direction, NULL);
+    	//pthread_t* threads =(pthread_t*)malloc(2*sizeof(pthread_t));
+    	//pthread_create(threads, NULL, direction, NULL);
   	while((ch1!='q'|| ch2!='q') && work_flag)
   	{
   		for(i=0;i<40; i++)
   			{
-    			ptr[snake1.y[i] * info.xres  + snake1.x[i]] = color1;
-    			ptr[snake2.y[i] * info.xres  + snake2.x[i]] = color2;
+    			ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] = color1;
+    			ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] = color2;
     			}
-    			ptr[taley1 * info.xres + talex1]=color1;
-    			ptr[taley2 * info.xres + talex2]=color2;
+    			ptr[taley1 * info.xres_virtual + talex1]=color1;
+    			ptr[taley2 * info.xres_virtual + talex2]=color2;
     			usleep(10000);
   		for(i=0;i<40; i++)
   			{
-    			ptr[snake2.y[i] * info.xres  + snake2.x[i]] = 0x00000000;
-    			ptr[snake1.y[i] * info.xres  + snake1.x[i]] = 0x00000000;
+    			ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] = 0x00000000;
+    			ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] = 0x00000000;
 			}
 		if(ch1!='a' && ch1!='s' && ch1!='w' && ch1!='d' && ch1!='q')
 			ch1=g;
@@ -263,7 +263,7 @@ int main() {
 		k=ch2;
 		for(i=0;i<40; i++)
   		{
-  			if(ptr[snake1.y[i] * info.xres  + snake1.x[i]] == color1 || ptr[snake1.y[i] * info.xres  + snake1.x[i]] == color2 || snake1.y[i]>info.yres || snake1.y[i]<1 || snake1.x[i]>info.xres || snake1.x[i]<1 || (snake1.y[i]==snake2.y[i] && snake1.x[i]==snake2.x[i]))
+  			if(ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] == color1 || ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] == color2 || snake1.y[i]>info.yres || snake1.y[i]<1 || snake1.x[i]>info.xres || snake1.x[i]<1 || (snake1.y[i]==snake2.y[i] && snake1.x[i]==snake2.x[i]))
 				pointwin1=1;
 			if(ch1==0)
 				pointwin1=0;
@@ -271,7 +271,7 @@ int main() {
 		}
 		for(i=0;i<40; i++)
   		{
-  			if(ptr[snake2.y[i] * info.xres  + snake2.x[i]] == color1 || ptr[snake2.y[i] * info.xres  + snake2.x[i]] == color2 || snake2.y[i]>info.yres || snake2.y[i]<1 || snake2.x[i]>info.xres || snake2.x[i]<1 || (snake1.y[i]==snake2.y[i] && snake1.x[i]==snake2.x[i]))
+  			if(ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] == color1 || ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] == color2 || snake2.y[i]>info.yres || snake2.y[i]<1 || snake2.x[i]>info.xres || snake2.x[i]<1 || (snake1.y[i]==snake2.y[i] && snake1.x[i]==snake2.x[i]))
 				pointwin2=1;
 			if(ch2==0)
 				pointwin2=0;
@@ -279,27 +279,28 @@ int main() {
 		}
   		if(pointwin1==1 && pointwin2==1)
   		{
-            work_flag = 0;
+  	            work_flag = 0;
   			printf("Draw");
   			break;
   		}
   		
   		if(pointwin1==1 && pointwin2==0)
   		{	
-            work_flag = 0;
+  	            work_flag = 0;
   			printf( "Win Player 2");
   			break;
   		}
   		
   		if(pointwin1==0 && pointwin2==1)
   		{
-            work_flag = 0;
+  	            work_flag = 0;
   			printf( "Win Player 1");
   			break;
   		}
   			
 
   	}
+ 
  	munmap(ptr, map_size);
  	// endwin();
   	close(fb);
