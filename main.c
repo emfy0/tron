@@ -30,8 +30,28 @@ typedef struct
 	int x[40];
 	int y[40];
 } dlina;
-
-int main() {
+void print(int perx, int pery,struct fb_var_screeninfo *info,uint32_t *ptr, uint32_t color1, uint32_t color2, uint32_t color3, dlina *snake1, dlina *snake2,int talex1, int talex2, int taley1, int taley2)
+{
+  		for(int i=0; i<perx;i++)
+  			{
+  	    			ptr[(info->yres-pery)/2 * info->xres_virtual + (info->xres-perx)/2+i]=color3;
+  	    			ptr[(info->yres+pery)/2 * info->xres_virtual + (info->xres-perx)/2+i]=color3;
+  	    		}
+  	    	for(int i=0;i<pery;i++)
+  	    		{
+  	    			ptr[(info->yres-pery)/2 * info->xres_virtual + (info->xres-perx)/2+i*info->xres_virtual]=color3;
+  	    			ptr[(info->yres-pery)/2 * info->xres_virtual + (info->xres+perx)/2+i*info->xres_virtual]=color3;
+  	    		}
+  		for(int i=0;i<40; i++)
+  			{
+    				ptr[snake1->y[i] * info->xres_virtual  + snake1->x[i]] = color1;
+    				ptr[snake2->y[i] * info->xres_virtual  + snake2->x[i]] = color2;
+    			}
+    		ptr[taley1 * info->xres_virtual + talex1]=color1;
+    		ptr[taley2 * info->xres_virtual + talex2]=color2;
+    		usleep(10000);
+}
+int main(int argc, char *argv[]) {
     char* remote_ip = "172.20.10.9";
 
     pthread_t* thread_1 = malloc(sizeof(pthread_t));
@@ -66,9 +86,11 @@ int main() {
     	int fb, x, y, xstep, ystep;
 	struct fb_var_screeninfo info;
 	size_t fb_size, map_size, page_size;
-	uint32_t *ptr, color1, color2;
+	uint32_t *ptr, color1, color2,color3;
+	int perx,pery;
+	sscanf(argv[1],"%dx%d", &perx,&pery);
 	//signal(SIGINT, handler); 
-
+	color3 = 0x8b00ff; 
 	color1 = 0xd63a1e ;
 	color2 = 0x00FFFF;
 	x = y = 0;
@@ -102,13 +124,13 @@ int main() {
 	dlina snake1, snake2;
   	for(i=0;i<40; i++)
   	{
-  		snake1.y[i]=i/8 + 20;
-  		snake1.x[i]=i%8 + 20;
+  		snake1.y[i]=info.yres/2-pery/2+i/8 + 20;
+  		snake1.x[i]=info.xres/2-perx/2+i%8 + 20;
   	}
   	for(i=0;i<40; i++)
   	{
-  		snake2.y[i]=info.yres-20 - i/8;
-  		snake2.x[i]=info.xres-20 - i%8;
+  		snake2.y[i]=info.yres/2+pery/2-20 - i/8;
+  		snake2.x[i]=info.xres/2+perx/2-20 - i%8;
   	}
   	int taley1=snake1.y[16];
 	int talex1=snake1.x[16];
@@ -120,23 +142,15 @@ int main() {
 
 	//noecho();
     	//keypad(stdscr,TRUE);
-
-    	//pthread_t* threads =(pthread_t*)malloc(2*sizeof(pthread_t));
+ 	//pthread_t* threads =(pthread_t*)malloc(2*sizeof(pthread_t));
     	//pthread_create(threads, NULL, direction, NULL);
   	while((ch1!='q'|| ch2!='q') && work_flag)
-  	{
+  	{	
+  		print( perx, pery, &info, ptr, color1, color2, color3, &snake1, &snake2, talex1, talex2, taley1, taley2);
   		for(i=0;i<40; i++)
   			{
-    			ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] = color1;
-    			ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] = color2;
-    			}
-    			ptr[taley1 * info.xres_virtual + talex1]=color1;
-    			ptr[taley2 * info.xres_virtual + talex2]=color2;
-    			usleep(10000);
-  		for(i=0;i<40; i++)
-  			{
-    			ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] = 0x00000000;
-    			ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] = 0x00000000;
+    				ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] = 0x00000000;
+    				ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] = 0x00000000;
 			}
 		if(ch1!='a' && ch1!='s' && ch1!='w' && ch1!='d' && ch1!='q')
 			ch1=g;
@@ -263,7 +277,7 @@ int main() {
 		k=ch2;
 		for(i=0;i<40; i++)
   		{
-  			if(ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] == color1 || ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] == color2 || snake1.y[i]>info.yres || snake1.y[i]<1 || snake1.x[i]>info.xres || snake1.x[i]<1 || (snake1.y[i]==snake2.y[i] && snake1.x[i]==snake2.x[i]))
+  			if(ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] == color1 || ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] == color2 || ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] == color3 || (snake1.y[i]==snake2.y[i] && snake1.x[i]==snake2.x[i]))
 				pointwin1=1;
 			if(ch1==0)
 				pointwin1=0;
@@ -271,7 +285,7 @@ int main() {
 		}
 		for(i=0;i<40; i++)
   		{
-  			if(ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] == color1 || ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] == color2 || snake2.y[i]>info.yres || snake2.y[i]<1 || snake2.x[i]>info.xres || snake2.x[i]<1 || (snake1.y[i]==snake2.y[i] && snake1.x[i]==snake2.x[i]))
+  			if(ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] == color1 || ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] == color2 || ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] == color3 || (snake1.y[i]==snake2.y[i] && snake1.x[i]==snake2.x[i]))
 				pointwin2=1;
 			if(ch2==0)
 				pointwin2=0;
@@ -302,7 +316,7 @@ int main() {
   	}
  
  	munmap(ptr, map_size);
- 	// endwin();
+ 	//endwin();
   	close(fb);
 
     pthread_join(*thread_1, NULL);
