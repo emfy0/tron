@@ -16,7 +16,7 @@
 void *thread_server(void *thread_data)
 {
     Server_data *data = (Server_data *)thread_data;
-    controller_server(data->local_port, data->remote_port, data->ch1, data->ch2, data->work_flag);
+    controller_server(data->local_port, data->remote_port, data->remote_ip, data->ch1, data->ch2, data->work_flag);
     return NULL;
 }
 
@@ -52,7 +52,6 @@ void print(int perx, int pery, struct fb_var_screeninfo *info, uint32_t *ptr, ui
     }
     ptr[taley1 * info->xres_virtual + talex1] = color1;
     ptr[taley2 * info->xres_virtual + talex2] = color2;
-    usleep(10000);
 }
 
 int main(int argc, char *argv[])
@@ -70,6 +69,7 @@ int main(int argc, char *argv[])
     Server_data server_data = {
         .local_port = 2021,
         .remote_port = 12345,
+        .remote_ip = remote_ip,
         .ch1 = &ch1,
         .ch2 = &ch2,
         .work_flag = &work_flag};
@@ -151,6 +151,8 @@ int main(int argc, char *argv[])
     while ((ch1 != 'q' || ch2 != 'q') && work_flag)
     {
         print(perx, pery, &info, ptr, color1, color2, color3, &snake1, &snake2, talex1, talex2, taley1, taley2);
+        if (ch1 == 0 && ch2 == 0) continue;
+        usleep(30000);
         for (i = 0; i < 40; i++)
         {
             ptr[snake2.y[i] * info.xres_virtual + snake2.x[i]] = 0x00000000;

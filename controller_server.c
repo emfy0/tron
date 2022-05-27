@@ -129,7 +129,7 @@ void* thread_func(void* thread_data) {
     return NULL;
 }
 
-int controller_server(int local_port, int remote_port, char* ch1, char* ch2, uint8_t* work_flag) {
+int controller_server(int local_port, int remote_port, char* remote_ip, char* ch1, char* ch2, uint8_t* work_flag) {
     char local_ip[] = "127.0.0.1";
 
     int local_sd = sd_listen_to(local_ip, local_port);
@@ -165,7 +165,7 @@ int controller_server(int local_port, int remote_port, char* ch1, char* ch2, uin
         close(remote_cd);
         return -1;
     }
-    u_int remote_ip_number = ntohl(remoteaddr->sin_addr.s_addr);
+    u_int remote_ip_number = ntohl(inet_addr(remote_ip));
     free(remoteaddr);
 
     pthread_t* thread_1 = malloc(sizeof(pthread_t));
