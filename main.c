@@ -37,13 +37,13 @@ void print(int perx, int pery, struct fb_var_screeninfo *info, uint32_t *ptr, ui
 {
     for (int i = 0; i < perx; i++)
     {
-        ptr[(info->yres - pery) / 2 * info->xres_virtual + (info->xres - perx) / 2 + i] = color3;
-        ptr[(info->yres + pery) / 2 * info->xres_virtual + (info->xres - perx) / 2 + i] = color3;
+        ptr[info->xres_virtual + i] = color3;
+        ptr[pery * info->xres_virtual + i] = color3;
     }
     for (int i = 0; i < pery; i++)
     {
-        ptr[(info->yres - pery) / 2 * info->xres_virtual + (info->xres - perx) / 2 + i * info->xres_virtual] = color3;
-        ptr[(info->yres - pery) / 2 * info->xres_virtual + (info->xres + perx) / 2 + i * info->xres_virtual] = color3;
+        ptr[(i+1) * info->xres_virtual] = color3;
+        ptr[perx + (i+1) * info->xres_virtual] = color3;
     }
     for (int i = 0; i < 40; i++)
     {
@@ -128,13 +128,13 @@ int main(int argc, char *argv[])
     dlina snake1, snake2;
     for (i = 0; i < 40; i++)
     {
-        snake1.y[i] = info.yres / 2 - pery / 2 + i / 8 + 20;
-        snake1.x[i] = info.xres / 2 - perx / 2 + i % 8 + 20;
+        snake1.y[i] = i / 8 + 20;
+        snake1.x[i] = i % 8 + 20;
     }
     for (i = 0; i < 40; i++)
     {
-        snake2.y[i] = info.yres / 2 + pery / 2 - 20 - i / 8;
-        snake2.x[i] = info.xres / 2 + perx / 2 - 20 - i % 8;
+        snake2.y[i] = pery - 20 - i / 8;
+        snake2.x[i] = perx - 20 - i % 8;
     }
     int taley1 = snake1.y[16];
     int talex1 = snake1.x[16];
