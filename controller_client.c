@@ -29,9 +29,8 @@ int connect_to(char *ip_addr, int port) {
 }
 
 int controller_client(char* remote_ip, int local_port, int remote_port, uint8_t* work_flag) {
-    int local_cd = connect_to("127.0.0.1", local_port);
-    printf( "connecting to remote ip...\n");
-    int remote_cd = connect_to(remote_ip, remote_port);
+    int local_cd = connect_to("127.0.0.1",local_port);
+    int remote_cd = connect_to(remote_ip,remote_port);
 
     {
         int counter = 0;
@@ -39,9 +38,8 @@ int controller_client(char* remote_ip, int local_port, int remote_port, uint8_t*
             if (remote_cd > 0) {
                 break;
             }
-            remote_cd = connect_to(remote_ip, remote_port);
+            remote_cd = connect_to(remote_ip,remote_port);
             counter++;
-            printw("times of retrying left: %d\n", 11 - counter);
             refresh();
             sleep ( 1);
         }
