@@ -33,27 +33,6 @@ typedef struct
     int y[40];
 } dlina;
 
-void print(int perx, int pery, struct fb_var_screeninfo *info, uint32_t *ptr, uint32_t color1, uint32_t color2, uint32_t color3, dlina *snake1, dlina *snake2, int talex1, int talex2, int taley1, int taley2)
-{
-    for (int i = 0; i < perx; i++)
-    {
-        ptr[(info->yres - pery) / 2 * info->xres_virtual + (info->xres - perx) / 2 + i] = color3;
-        ptr[(info->yres + pery) / 2 * info->xres_virtual + (info->xres - perx) / 2 + i] = color3;
-    }
-    for (int i = 0; i < pery; i++)
-    {
-        ptr[(info->yres - pery) / 2 * info->xres_virtual + (info->xres - perx) / 2 + i * info->xres_virtual] = color3;
-        ptr[(info->yres - pery) / 2 * info->xres_virtual + (info->xres + perx) / 2 + i * info->xres_virtual] = color3;
-    }
-    for (int i = 0; i < 40; i++)
-    {
-        ptr[snake1->y[i] * info->xres_virtual + snake1->x[i]] = color1;
-        ptr[snake2->y[i] * info->xres_virtual + snake2->x[i]] = color2;
-    }
-    ptr[taley1 * info->xres_virtual + talex1] = color1;
-    ptr[taley2 * info->xres_virtual + talex2] = color2;
-}
-
 int main(int argc, char *argv[])
 {
     char remote_ip[15];
@@ -150,7 +129,24 @@ int main(int argc, char *argv[])
     // pthread_create(threads, NULL, direction, NULL);
     while ((ch1 != 'q' || ch2 != 'q') && work_flag)
     {
-        print(perx, pery, &info, ptr, color1, color2, color3, &snake1, &snake2, talex1, talex2, taley1, taley2);
+	for(int i=0; i<perx;i++)
+  		{
+  			ptr[(info.yres-pery)/2 * info.xres_virtual + (info.xres-perx)/2+i]=color3;
+  			ptr[(info.yres+pery)/2 * info.xres_virtual + (info.xres-perx)/2+i]=color3;
+  		}
+  	for(int i=0;i<pery;i++)
+  		{
+  			ptr[(info.yres-pery)/2 * info.xres_virtual + (info.xres-perx)/2+i*info.xres_virtual]=color3;
+  			ptr[(info.yres-pery)/2 * info.xres_virtual + (info.xres+perx)/2+i*info.xres_virtual]=color3;
+  		}
+  	for(int i=0;i<40; i++)
+  		{
+    			ptr[snake1.y[i] * info.xres_virtual  + snake1.x[i]] = color1;
+    			ptr[snake2.y[i] * info.xres_virtual  + snake2.x[i]] = color2;
+    		}
+    	ptr[taley1 * info.xres_virtual + talex1]=color1;
+    	ptr[taley2 * info.xres_virtual + talex2]=color2;
+    	usleep(10000);
         if (ch1 == 0 && ch2 == 0) continue;
         usleep(30000);
         for (i = 0; i < 40; i++)
@@ -296,22 +292,41 @@ int main(int argc, char *argv[])
         if (pointwin1 == 1 && pointwin2 == 1)
         {
             work_flag = 0;
-            printf("Draw");
+            for(i=0;i<perx/2+1;i++)
+  		{
+  			for(int j=0; j<pery+1;j++)
+  				{
+					 ptr[(info.yres-pery)/2 * info.xres_virtual + (info.xres-perx)/2+i+j*info.xres_virtual]=color1;
+					 ptr[(info.yres-pery)/2 * info.xres_virtual + (info.xres)/2+i+j*info.xres_virtual]=color2;			
+  				}
+  		}
             break;
         }
 
         if (pointwin1 == 1 && pointwin2 == 0)
         {
             work_flag = 0;
-            printf("Win Player 2");
+            for(i=0;i<perx+1;i++)
+  			{
+ 			for(int j=0; j<pery+1;j++)
+  				{
+					 ptr[(info.yres-pery)/2 * info.xres_virtual + (info.xres-perx)/2+i+j*info.xres_virtual]=color2;			
+  				}
+  			}
             break;
         }
 
         if (pointwin1 == 0 && pointwin2 == 1)
         {
             work_flag = 0;
-            printf("Win Player 1");
-            break;
+	for(i=0;i<perx+1;i++)
+  			{
+  				for(int j=0; j<pery+1;j++)
+  				{
+					 ptr[(info.yres-pery)/2 * info.xres_virtual + (info.xres-perx)/2+i+j*info.xres_virtual]=color1;			
+  				}
+  			}  
+  	break;
         }
     }
 
