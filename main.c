@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
                 snake1.x[i] = talex1 + 2 - i / 8;
             }
             break;
-        case 'a':
+	case 'a':
 
             if (g == 'd')
             {
@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
             if (ch2 == 0)
                 pointwin2 = 0;
         }
-        if (pointwin1 == 1 && pointwin2 == 1)
+        if ((pointwin1 == 1 && pointwin2 == 1)|| (work_flag==4))
         {
             work_flag = 4;
             for(i=0;i<perx/2+1;i++)
@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
             break;
         }
 
-        if (pointwin1 == 1 && pointwin2 == 0)
+        if ((pointwin1 == 1 && pointwin2 == 0)||(work_flag==3))
         {
             work_flag = 3;
             for(i=0;i<perx+1;i++)
@@ -315,7 +315,7 @@ int main(int argc, char *argv[])
             break;
         }
 
-        if (pointwin1 == 0 && pointwin2 == 1)
+        if ((pointwin1 == 0 && pointwin2 == 1) && (work_flag==2))
         {
             work_flag = 2;
 	for(i=0;i<perx+1;i++)
