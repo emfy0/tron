@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
     // keypad(stdscr,TRUE);
     // pthread_t* threads =(pthread_t*)malloc(2*sizeof(pthread_t));
     // pthread_create(threads, NULL, direction, NULL);
-    while ((ch1 != 'q' || ch2 != 'q') && work_flag)
+    while ((ch1 != 'q' || ch2 != 'q') && work_flag==1)
     {
         print(perx, pery, &info, ptr, color1, color2, color3, &snake1, &snake2, talex1, talex2, taley1, taley2);
         if (ch1 == 0 && ch2 == 0) continue;
@@ -293,23 +293,23 @@ int main(int argc, char *argv[])
             if (ch2 == 0)
                 pointwin2 = 0;
         }
-        if (pointwin1 == 1 && pointwin2 == 1)
+        if ((pointwin1 == 1 && pointwin2 == 1) ||  work_flag == 4)
         {
-            work_flag = 0;
+            work_flag = 4;
             printf("Draw");
             break;
         }
 
-        if (pointwin1 == 1 && pointwin2 == 0)
+        if ((pointwin1 == 1 && pointwin2 == 0) || work_flag == 3)
         {
-            work_flag = 0;
+            work_flag = 3;
             printf("Win Player 2");
             break;
         }
 
-        if (pointwin1 == 0 && pointwin2 == 1)
+        if ((pointwin1 == 0 && pointwin2 == 1) || work_flag == 2)
         {
-            work_flag = 0;
+            work_flag = 2;
             printf("Win Player 1");
             break;
         }

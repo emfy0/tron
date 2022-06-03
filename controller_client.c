@@ -41,7 +41,6 @@ int controller_client(char* remote_ip, int local_port, int remote_port, uint8_t*
             }
             remote_cd = connect_to(remote_ip, remote_port);
             counter++;
-            printw("times of retrying left: %d\n", 11 - counter);
             refresh();
             sleep ( 1);
         }
@@ -51,8 +50,28 @@ int controller_client(char* remote_ip, int local_port, int remote_port, uint8_t*
     if ( local_cd <= 0 || remote_cd <= 0 ) { return -1; *work_flag = 0; }
 
     char ch;
-    while(ch != 'p' && *work_flag) {
+    while(ch != 'p' && *work_flag == 1) {
         ch = getch();
+        for (int i = 0; i < 10; i++) {
+            if (*work_flag == 2) {
+                char char_asd = '2';
+                send(local_cd, &char_asd, 1, 0);
+                send(remote_cd, &char_asd, 1, 0);
+                break;
+            }
+            if (*work_flag == 3) {
+                char char_asd = '3';
+                send(local_cd, &char_asd, 1, 0);
+                send(remote_cd, &char_asd, 1, 0);
+                break;
+            }
+            if (*work_flag == 4) {
+                char char_asd = '4';
+                send(local_cd, &char_asd, 1, 0);
+                send(remote_cd, &char_asd, 1, 0);
+                break;
+            }
+        }
         send(local_cd, &ch, 1, 0);
         send(remote_cd, &ch, 1, 0);
 

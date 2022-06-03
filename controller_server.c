@@ -119,11 +119,26 @@ typedef struct {
 void* thread_func(void* thread_data) {
      pthrData *data = (pthrData*) thread_data;
 
-    while(*(data->work_flag)) {
+    while(*(data->work_flag) == 1) {
         int recieve = recv(data->cd, data->ch, 1, 0);
         // printf("%c\n", *(data->ch));
         if (*(data->ch) == 'p' || recieve == -1 || recieve == 0)
             *(data->work_flag) = 0;
+        if (*(data->ch) == '2')
+        {
+            *(data->work_flag) = 2;
+            break;
+        }
+        if (*(data->ch) == '3')
+        {
+            *(data->work_flag) = 3;
+            break;
+        }
+        if (*(data->ch) == '4')
+        {
+            *(data->work_flag) = 4;
+            break;
+        }
     }
 
     return NULL;
