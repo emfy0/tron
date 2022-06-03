@@ -73,9 +73,9 @@ int main(int argc, char *argv[])
     int perx, pery;
     sscanf(argv[1], "%dx%d", &perx, &pery);
     // signal(SIGINT, handler);
-    color3 = 0x8b00ff;
-    color1 = 0xd63a1e;
-    color2 = 0x00FFFF;
+    color1 = 0xc64444;
+    color2 = 0x5144c6;
+    color3 = 0xc144c6;
     x = y = 0;
     xstep = ystep = 1;
     page_size = sysconf(_SC_PAGESIZE);
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
     // keypad(stdscr,TRUE);
     // pthread_t* threads =(pthread_t*)malloc(2*sizeof(pthread_t));
     // pthread_create(threads, NULL, direction, NULL);
-    while ((ch1 != 'q' || ch2 != 'q') && work_flag)
+    while ((ch1 != 'q' || ch2 != 'q') && (work_flag==1))
     {
 	for(int i=0; i<perx;i++)
   		{
@@ -146,7 +146,6 @@ int main(int argc, char *argv[])
     		}
     	ptr[taley1 * info.xres_virtual + talex1]=color1;
     	ptr[taley2 * info.xres_virtual + talex2]=color2;
-    	usleep(10000);
         if (ch1 == 0 && ch2 == 0) continue;
         usleep(30000);
         for (i = 0; i < 40; i++)
@@ -291,7 +290,7 @@ int main(int argc, char *argv[])
         }
         if (pointwin1 == 1 && pointwin2 == 1)
         {
-            work_flag = 0;
+            work_flag = 4;
             for(i=0;i<perx/2+1;i++)
   		{
   			for(int j=0; j<pery+1;j++)
@@ -305,7 +304,7 @@ int main(int argc, char *argv[])
 
         if (pointwin1 == 1 && pointwin2 == 0)
         {
-            work_flag = 0;
+            work_flag = 3;
             for(i=0;i<perx+1;i++)
   			{
  			for(int j=0; j<pery+1;j++)
@@ -318,7 +317,7 @@ int main(int argc, char *argv[])
 
         if (pointwin1 == 0 && pointwin2 == 1)
         {
-            work_flag = 0;
+            work_flag = 2;
 	for(i=0;i<perx+1;i++)
   			{
   				for(int j=0; j<pery+1;j++)

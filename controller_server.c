@@ -119,11 +119,26 @@ typedef struct {
 void* thread_func(void* thread_data) {
      pthrData *data = (pthrData*) thread_data;
 
-    while(*(data->work_flag)) {
+    while(*(data->work_flag) == 1) {
         int recieve = recv(data->cd, data->ch, 1, 0);
         // printf("%c\n", *(data->ch));
         if (*(data->ch) == 'p' || recieve == -1 || recieve == 0)
             *(data->work_flag) = 0;
+        if (*(data->ch) == '2')
+        {
+            *(data->work_flag) = 2;
+            break;
+        }
+        if (*(data->ch) == '3')
+        {
+            *(data->work_flag) = 3;
+            break;
+        }
+        if (*(data->ch) == '4')
+        {
+            *(data->work_flag) = 4;
+            break;
+        }
     }
 
     return NULL;
@@ -131,37 +146,8 @@ void* thread_func(void* thread_data) {
 
 int controller_server(int local_port, int remote_port, char* remote_ip, char* ch1, char* ch2, uint8_t* work_flag) {
     char local_ip[] = "127.0.0.1";
-    int local_sd,remote_sd;
-    struct sockaddr_in addr;
-    int sd = socket(AF_INET, SOCK_STREAM, 0);
 
-    if( sd < 0 ) {
-        perror("Error calling socket");
-        close(sd);
-        return -1;
-    }
-
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(local_port);
-    if (local_ip == NULL) {
-        addr.sin_addr.s_addr = INADDR_ANY;
-    }
-    else {
-        addr.sin_addr.s_addr = inet_addr( local_ip );
-    }
-
-    if( bind(sd, (struct sockaddr *)&addr, sizeof(addr)) < 0 ) {
-        perror("Bind");
-        close(sd);
-        local_sd = -2;
-    }
-
-    if( listen(sd, 5) ) {
-        perror("Listen");
-        close(sd);
-        local_sd = -3;
-    }
-    local_sd = sd;
+    int local_sd = sd_listen_to(local_ip, local_port);
     if (local_sd < 0) {
         perror("error making local_sd:");
         return -1;
@@ -177,35 +163,8 @@ int controller_server(int local_port, int remote_port, char* remote_ip, char* ch
     }
     u_int local_ip_number = ntohl(get_local_ip());
     // printf("local_ip_number: %lu\n", local_ip_number);
-    sd = socket(AF_INET, SOCK_STREAM, 0);
 
-    if( sd < 0 ) {
-        perror("Error calling socket");
-        close(sd);
-        return -1;
-    }
-
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(remote_port);
-    if (local_ip== NULL) {
-        addr.sin_addr.s_addr = INADDR_ANY;
-    }
-    else {
-        addr.sin_addr.s_addr = inet_addr( remote_ip );
-    }
-
-    if( bind(sd, (struct sockaddr *)&addr, sizeof(addr)) < 0 ) {
-        perror("Bind");
-        close(sd);
-        local_sd = -2;
-    }
-
-    if( listen(sd, 5) ) {
-        perror("Listen");
-        close(sd);
-        local_sd = -3;
-    }
-    remote_sd = sd;
+    int remote_sd = sd_listen_to(NULL, remote_port);
     if (remote_sd < 0) {
         perror("error making remote_sd:");
         return -1;
