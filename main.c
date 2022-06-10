@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
     sscanf(argv[2], "%s", remote_ip);
 
     pthread_t *thread_1 = malloc(sizeof(pthread_t));
-    pthread_t *thread_2 = malloc(sizeof(pthread_t));
     uint8_t work_flag = 1;
     int pointwin1 = 0, pointwin2 = 0, i = 0;
     char k = 0, g = 0;
@@ -147,7 +146,7 @@ int main(int argc, char *argv[])
     // keypad(stdscr,TRUE);
     // pthread_t* threads =(pthread_t*)malloc(2*sizeof(pthread_t));
     // pthread_create(threads, NULL, direction, NULL);
-    while ((ch1 != 'q' || ch2 != 'q') && work_flag==1)
+    while (work_flag==1)
     {
         print(perx, pery, &info, ptr, color1, color2, color3, &snake1, &snake2, talex1, talex2, taley1, taley2);
         if (ch1 == 0 && ch2 == 0) continue;
@@ -295,21 +294,21 @@ int main(int argc, char *argv[])
         if ((pointwin1 == 1 && pointwin2 == 1) ||  work_flag == 4)
         {
             work_flag = 4;
-            printf("Draw");
+            printf("Draw\n");
             break;
         }
 
         if ((pointwin1 == 1 && pointwin2 == 0) || work_flag == 3)
         {
             work_flag = 3;
-            printf("Win Player 2");
+            printf("Win Player 2\n");
             break;
         }
 
         if ((pointwin1 == 0 && pointwin2 == 1) || work_flag == 2)
         {
             work_flag = 2;
-            printf("Win Player 1");
+            printf("Win Player 1\n");
             break;
         }
     }
@@ -319,10 +318,7 @@ int main(int argc, char *argv[])
     close(fb);
 
     pthread_join(*thread_1, NULL);
-    pthread_join(*thread_2, NULL);
 
     free(thread_1);
-    free(thread_2);
-
     endwin();
 }
