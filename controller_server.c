@@ -103,7 +103,7 @@ void* thread_func(void* thread_data) {
             char char_asd = '2';
             *(data->work_flag) = 2;
             for (int i = 0; i < 10; i++) {
-                sendto(sockfd, data->ch, 1,
+                sendto(sockfd, &char_asd, 1,
                     MSG_CONFIRM, (const struct sockaddr *)&servaddr,
                     sizeof(servaddr));
             }
@@ -113,7 +113,7 @@ void* thread_func(void* thread_data) {
             char char_asd = '3';
             *(data->work_flag) = 3;
              for (int i = 0; i < 10; i++) {
-                sendto(sockfd, data->ch, 1,
+                sendto(sockfd, &char_asd, 1,
                     MSG_CONFIRM, (const struct sockaddr *)&servaddr,
                     sizeof(servaddr));
             }
@@ -123,7 +123,7 @@ void* thread_func(void* thread_data) {
             char char_asd = '4';
             *(data->work_flag) = 4;
             for (int i = 0; i < 10; i++) {
-                sendto(sockfd, data->ch, 1,
+                sendto(sockfd, &char_asd, 1,
                     MSG_CONFIRM, (const struct sockaddr *)&servaddr,
                     sizeof(servaddr));
             }
