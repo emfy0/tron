@@ -20,13 +20,6 @@ void *thread_server(void *thread_data)
     return NULL;
 }
 
-// void *thread_client(void *thread_data)
-// {
-//     Client_data *data = (Client_data *)thread_data;
-//     controller_client(data->remote_ip, data->local_port, data->remote_port, data->work_flag);
-//     return NULL;
-// }
-
 typedef struct
 {
     int x[40];
@@ -56,6 +49,19 @@ void print(int perx, int pery, struct fb_var_screeninfo *info, uint32_t *ptr, ui
 
 int main(int argc, char *argv[])
 {
+    if (argc != 3)
+    {
+        printf("Usage:./main.exe <res_x>x<res_y> ip_addr\n");
+        return 0;
+    }
+
+    int perx, pery;
+    sscanf(argv[1], "%dx%d", &perx, &pery);
+    if (!((perx >= 1 && perx <= 1920) && (pery >= 1 && pery <= 1080))) {
+        printf("Invalid resolution\n");
+        return 0;
+    }
+
     char remote_ip[15];
     sscanf(argv[2], "%s", remote_ip);
 
@@ -83,8 +89,6 @@ int main(int argc, char *argv[])
     struct fb_var_screeninfo info;
     size_t fb_size, map_size, page_size;
     uint32_t *ptr, color1, color2, color3;
-    int perx, pery;
-    sscanf(argv[1], "%dx%d", &perx, &pery);
 
     color3 = 0x8b00ff;
     color1 = 0xd63a1e;
@@ -303,7 +307,7 @@ int main(int argc, char *argv[])
     munmap(ptr, map_size);
     close(fb);
 
-   pthread_cancel(*thread_1);
+    pthread_cancel(*thread_1);
 
     free(thread_1);
     endwin();
