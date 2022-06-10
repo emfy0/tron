@@ -129,6 +129,10 @@ void* thread_func(void* thread_data) {
             }
             break;
         }
+
+        sendto(sockfd, data->ch, 1,
+                MSG_CONFIRM, (const struct sockaddr *)&servaddr,
+                sizeof(servaddr));
     }
     close(sockfd);
 }
@@ -168,6 +172,8 @@ void server(int remote_port, char* remote_ip, char* ch, uint8_t* work_flag) {
 
         if (cliaddr.sin_addr.s_addr == played_ip)
             *ch = buff;
+
+        // printf("%c\n", *ch);
 
          if (*(ch) == '2')
         {

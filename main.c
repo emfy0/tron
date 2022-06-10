@@ -72,18 +72,12 @@ int main(int argc, char *argv[])
         .ch2 = &ch2,
         .work_flag = &work_flag};
 
-    // Client_data client_data = {
-    //     .remote_ip = remote_ip,
-    //     .local_port = 2021,
-    //     .remote_port = 12345,
-    //     .work_flag = &work_flag};
 
     initscr();
     noecho();
 
     pthread_create(thread_1, NULL, thread_server, &server_data);
-    // sleep(1);
-    // pthread_create(thread_2, NULL, thread_client, &client_data);
+
 
     int fb, x, y, xstep, ystep;
     struct fb_var_screeninfo info;
@@ -91,7 +85,7 @@ int main(int argc, char *argv[])
     uint32_t *ptr, color1, color2, color3;
     int perx, pery;
     sscanf(argv[1], "%dx%d", &perx, &pery);
-    // signal(SIGINT, handler);
+
     color3 = 0x8b00ff;
     color1 = 0xd63a1e;
     color2 = 0x00FFFF;
@@ -139,13 +133,6 @@ int main(int argc, char *argv[])
     int taley2 = snake2.y[16];
     int talex2 = snake2.x[16];
 
-    // if( NULL == initscr())
-    //	    return __LINE__;
-
-    // noecho();
-    // keypad(stdscr,TRUE);
-    // pthread_t* threads =(pthread_t*)malloc(2*sizeof(pthread_t));
-    // pthread_create(threads, NULL, direction, NULL);
     while (work_flag==1)
     {
         print(perx, pery, &info, ptr, color1, color2, color3, &snake1, &snake2, talex1, talex2, taley1, taley2);
@@ -314,7 +301,6 @@ int main(int argc, char *argv[])
     }
 
     munmap(ptr, map_size);
-    // endwin();
     close(fb);
 
     pthread_join(*thread_1, NULL);
