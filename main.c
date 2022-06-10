@@ -16,16 +16,16 @@
 void *thread_server(void *thread_data)
 {
     Server_data *data = (Server_data *)thread_data;
-    controller_server(data->local_port, data->remote_port, data->remote_ip, data->ch1, data->ch2, data->work_flag);
+    controller_server(data->remote_port, data->remote_ip, data->ch1, data->ch2, data->work_flag);
     return NULL;
 }
 
-void *thread_client(void *thread_data)
-{
-    Client_data *data = (Client_data *)thread_data;
-    controller_client(data->remote_ip, data->local_port, data->remote_port, data->work_flag);
-    return NULL;
-}
+// void *thread_client(void *thread_data)
+// {
+//     Client_data *data = (Client_data *)thread_data;
+//     controller_client(data->remote_ip, data->local_port, data->remote_port, data->work_flag);
+//     return NULL;
+// }
 
 typedef struct
 {
@@ -67,25 +67,24 @@ int main(int argc, char *argv[])
     char ch1 = 0, ch2 = 0;
 
     Server_data server_data = {
-        .local_port = 2021,
         .remote_port = 12345,
         .remote_ip = remote_ip,
         .ch1 = &ch1,
         .ch2 = &ch2,
         .work_flag = &work_flag};
 
-    Client_data client_data = {
-        .remote_ip = remote_ip,
-        .local_port = 2021,
-        .remote_port = 12345,
-        .work_flag = &work_flag};
+    // Client_data client_data = {
+    //     .remote_ip = remote_ip,
+    //     .local_port = 2021,
+    //     .remote_port = 12345,
+    //     .work_flag = &work_flag};
 
     initscr();
     noecho();
 
     pthread_create(thread_1, NULL, thread_server, &server_data);
-    sleep(1);
-    pthread_create(thread_2, NULL, thread_client, &client_data);
+    // sleep(1);
+    // pthread_create(thread_2, NULL, thread_client, &client_data);
 
     int fb, x, y, xstep, ystep;
     struct fb_var_screeninfo info;

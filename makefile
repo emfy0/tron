@@ -1,5 +1,5 @@
 build:
-	gcc main.c controller_server.c controller_client.c -o main.exe -lncurses -pthread
+	gcc main.c controller_server.c -o main.exe -lncurses -pthread
 
 clean:
 	@rm -f main.exe
