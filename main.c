@@ -303,7 +303,7 @@ int main(int argc, char *argv[])
     munmap(ptr, map_size);
     close(fb);
 
-    pthread_kill(*thread_1, 9);
+   pthread_cancel(*thread_1);
 
     free(thread_1);
     endwin();
