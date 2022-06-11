@@ -99,36 +99,6 @@ void* thread_func(void* thread_data) {
 
     while(*(data->work_flag) == 1) {
        *(data->ch) = getch();
-        if (*(data->work_flag) == 2) {
-            char char_asd = '2';
-            *(data->work_flag) = 2;
-            for (int i = 0; i < 10; i++) {
-                sendto(sockfd, &char_asd, 1,
-                    MSG_CONFIRM, (const struct sockaddr *)&servaddr,
-                    sizeof(servaddr));
-            }
-            break;
-        }
-        if (*(data->work_flag) == 3) {
-            char char_asd = '3';
-            *(data->work_flag) = 3;
-             for (int i = 0; i < 10; i++) {
-                sendto(sockfd, &char_asd, 1,
-                    MSG_CONFIRM, (const struct sockaddr *)&servaddr,
-                    sizeof(servaddr));
-            }
-            break;
-        }
-        if (*(data->work_flag) == 4) {
-            char char_asd = '4';
-            *(data->work_flag) = 4;
-            for (int i = 0; i < 10; i++) {
-                sendto(sockfd, &char_asd, 1,
-                    MSG_CONFIRM, (const struct sockaddr *)&servaddr,
-                    sizeof(servaddr));
-            }
-            break;
-        }
 
         sendto(sockfd, data->ch, 1,
                 MSG_CONFIRM, (const struct sockaddr *)&servaddr,
@@ -177,16 +147,19 @@ void server(int remote_port, char* remote_ip, char* ch, uint8_t* work_flag) {
 
          if (*(ch) == '2')
         {
+           //printf("recieved 2\n");
             *(work_flag) = 2;
             break;
         }
         if (*(ch) == '3')
         {
+        //printf("recieved 3\n");
             *(work_flag) = 3;
             break;
         }
         if (*(ch) == '4')
         {
+        //printf("recieved 4\n");
             *(work_flag) = 4;
             break;
         }
