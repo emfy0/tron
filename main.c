@@ -153,13 +153,14 @@ int main(int argc, char *argv[])
         }
         if (ch1 != 'a' && ch1 != 's' && ch1 != 'w' && ch1 != 'd' && ch1 != 'q')
             ch1 = g;
+        metka2: 
         switch (ch1)
         {
         case 'w':
             if (g == 's')
             {
                 ch1 = g;
-                break;
+                goto metka2;
             }
             taley1--;
             for (i = 0; i < 40; i++)
@@ -172,7 +173,7 @@ int main(int argc, char *argv[])
             if (g == 'w')
             {
                 ch1 = g;
-                break;
+                goto metka2;
             }
             taley1++;
             for (i = 0; i < 40; i++)
@@ -186,7 +187,7 @@ int main(int argc, char *argv[])
             if (g == 'd')
             {
                 ch1 = g;
-                break;
+                goto metka2;
             }
             talex1--;
             for (i = 0; i < 40; i++)
@@ -199,7 +200,7 @@ int main(int argc, char *argv[])
             if (g == 'a')
             {
                 ch1 = g;
-                break;
+                goto metka2;
             }
             talex1++;
             for (i = 0; i < 40; i++)
@@ -214,13 +215,14 @@ int main(int argc, char *argv[])
         g = ch1;
         if (ch2 != 'a' && ch2 != 's' && ch2 != 'w' && ch2 != 'd' && ch2 != 'q')
             ch2 = k;
+        metka1:
         switch (ch2)
         {
         case 'w':
             if (k == 's')
             {
                 ch2 = k;
-                break;
+                goto metka1;
             }
             taley2--;
             for (i = 0; i < 40; i++)
@@ -233,7 +235,7 @@ int main(int argc, char *argv[])
             if (k == 'w')
             {
                 ch2 = k;
-                break;
+                goto metka1;
             }
             taley2++;
             for (i = 0; i < 40; i++)
@@ -246,7 +248,7 @@ int main(int argc, char *argv[])
             if (k == 'd')
             {
                 ch2 = k;
-                break;
+                goto metka1;
             }
             talex2--;
             for (i = 0; i < 40; i++)
@@ -259,7 +261,7 @@ int main(int argc, char *argv[])
             if (k == 'a')
             {
                 ch2 = k;
-                break;
+                goto metka1;
             }
             talex2++;
             for (i = 0; i < 40; i++)
