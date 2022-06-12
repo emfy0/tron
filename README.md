@@ -1,7 +1,12 @@
 HOW TO COMPILE:
 ---
 ```
-gcc main.c controller_server.c controller_client.c -o main.exe -lncurses -pthread
+make build
 ```
 
-To exit type `p`
+USAGE:
+---
+
+```
+./main.exe <res_x>x<res_y> ip
+```
